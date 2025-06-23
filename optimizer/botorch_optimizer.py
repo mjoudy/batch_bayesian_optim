@@ -3,7 +3,7 @@
 import torch
 import numpy as np
 from botorch.models import SingleTaskGP
-from botorch.optim.fit import fit_gpytorch_model
+from botorch.fit import fit_gpytorch_mll
 from botorch.acquisition import qExpectedImprovement
 from botorch.optim import optimize_acqf
 from gpytorch.mlls import ExactMarginalLogLikelihood
@@ -23,9 +23,9 @@ class BoTorchOptimizer:
 
         model = SingleTaskGP(self.train_X, self.train_Y)
         mll = ExactMarginalLogLikelihood(model.likelihood, model)
-        fit_gpytorch_model(mll)
+        fit_gpytorch_mll(mll)
 
-        acq_func = qExpectedImprovement(model=model, best_f=self.train_Y.max(), maximize=True)
+        acq_func = qExpectedImprovement(model=model, best_f=self.train_Y.max())
         candidates, _ = optimize_acqf(
             acq_function=acq_func,
             bounds=self.bounds,
